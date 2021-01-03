@@ -30,7 +30,7 @@ _UNCHANGED_RF_LAYER_OPS = [
     "Add", "AddV2", "BiasAdd", "Cast", "Ceil", "ConcatV2", "Const", "Floor",
     "FusedBatchNorm", "FusedBatchNormV3", "Identity", "Log", "Mul", "Pow",
     "ReadVariableOp", "RealDiv", "Relu", "Relu6", "Round", "Rsqrt", "Softplus",
-    "Sub", "VarHandleOp", "VariableV2", "LRN", "GreaterEqual"
+    "Sub", "VarHandleOp", "VariableV2", "LRN", "GreaterEqual", "StopGradient"
 ]
 
 # Different ways in which padding modes may be spelled.
@@ -85,10 +85,15 @@ def _conv_kernel_size(node, name_to_node):
     ValueError: If the weight layer node is misconfigured.
   """
   weights_layer_read_name = node.input[1]
+  print(weights_layer_read_name)
   if weights_layer_read_name.endswith("/read"):
     weights_layer_param_name = weights_layer_read_name[:-5]
   elif weights_layer_read_name.endswith("/Conv2D/ReadVariableOp"):
-    weights_layer_param_name = weights_layer_read_name[:-22] + "/kernel"
+  	weights_layer_param_name = weights_layer_read_name + "/resource"
+    #weights_layer_param_name = weights_layer_read_name[:-22] + "/kernel"
+  elif weights_layer_read_name.endswith("/depthwise/ReadVariableOp"):
+  	weights_layer_param_name = weights_layer_read_name + "/resource"
+    #weights_layer_param_name = weights_layer_read_name[:-22] + "/kernel"
   else:
     raise ValueError(
         "Weight layer's name input to conv layer does not end with '/read' or "

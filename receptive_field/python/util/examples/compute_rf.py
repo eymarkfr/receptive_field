@@ -25,7 +25,7 @@ import sys
 from absl import app
 from absl import logging
 import receptive_field as rf
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 from google.protobuf import text_format
 
